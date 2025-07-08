@@ -1,0 +1,29 @@
+class Solution {
+public:
+    int solve(vector<vector<int>>& events, int idx,int k,vector<vector<int>>& dp,vector<int>& nextIdx){
+        if(idx>=events.size() || k==0) return 0;
+        if(dp[idx][k]!=-1) return dp[idx][k];
+    
+        int value=events[idx][2];
+
+        int skip=solve(events,idx+1,k,dp,nextIdx);  
+        
+        int take=value+solve(events,nextIdx[idx],k-1,dp,nextIdx);
+
+        return dp[idx][k]=max(take,skip);
+
+        
+    }
+    int maxValue(vector<vector<int>>& events, int k) {
+        sort(begin(events),end(events));
+        int n=events.size();
+        vector<int>nextIdx(n);
+        for(int i=0;i<n;i++){
+            int ends=events[i][1];
+            vector<int>target={ends+1,0,0};
+            nextIdx[i]=upper_bound(begin(events),end(events),target)-begin(events);
+        }
+        vector<vector<int>>dp(n+1,vector<int>(k+1,-1));
+        return solve(events,0,k,dp,nextIdx);
+    }
+};

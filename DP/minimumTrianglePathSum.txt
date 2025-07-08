@@ -1,0 +1,41 @@
+Bottom-Up:
+Space Complexity-O(N)
+class Solution {
+public:
+    int minimumTotal(vector<vector<int>>& triangle) {
+        int n=triangle.size();
+        vector<int>front(n,0);
+        for(int j=0;j<n;j++){
+            front[j]=triangle[n-1][j];
+        }
+
+        for(int i=n-2;i>=0;i--){
+            vector<int>curr(n,0);
+            for(int j=i;j>=0;j--){
+                int d=triangle[i][j]+front[j];
+                int dg=triangle[i][j]+front[j+1];
+                curr[j]=min(d,dg);
+            }
+            front=curr;
+        }
+        return front[0];
+    }
+};
+
+Memo:
+
+class Solution {
+public:
+    int solve(vector<vector<int>>& triangle,int i,int j,int n,vector<vector<int>>& t){
+        if(i==n-1) return triangle[n-1][j];
+        if(t[i][j]!=-1) return t[i][j];
+        int d=triangle[i][j]+solve(triangle,i+1,j,n,t);
+        int dg=triangle[i][j]+solve(triangle,i+1,j+1,n,t);
+        return t[i][j]=min(d,dg);
+    }
+    int minimumTotal(vector<vector<int>>& triangle) {
+        int n=triangle.size();
+        vector<vector<int>>t(n+1,vector<int>(n+1,-1));
+        return solve(triangle,0,0,n,t);
+    }
+};
