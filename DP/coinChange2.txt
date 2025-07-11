@@ -1,0 +1,38 @@
+bottomUp 1D space:
+class Solution {
+public:
+    int change(int amount, vector<int>& coins) {
+        vector<unsigned long long> dp(amount + 1, 0);
+        dp[0] = 1;  // One way to make amount 0
+
+        for (int coin : coins) {  
+            for (int j = coin; j <= amount; j++) {// iterating througn all coins and finding the number of ways of making the amount j starting from the coin itself.
+                dp[j] += dp[j - coin];
+            }
+        }
+
+        return static_cast<int>(dp[amount]);  // Cast safely to int
+    }
+};
+
+memo:
+
+class Solution {
+public:
+    int solve(int amount, vector<int>& coins,int idx,vector<vector<int>> &dp){
+        if(amount==0) return 1;
+        if(idx>=coins.size()) return 0;
+        if(dp[idx][amount]!=-1) return dp[idx][amount];
+        int not_take=solve(amount,coins,idx+1,dp);
+        int take=0;
+        if(coins[idx]<=amount){
+            take=solve(amount-coins[idx],coins,idx,dp);
+        }
+        return dp[idx][amount]=take+not_take;
+    }
+    int change(int amount, vector<int>& coins) {
+        int n=coins.size();
+        vector<vector<int>>dp(n+1,vector<int>(amount+1,-1));
+        return solve(amount,coins,0,dp);
+    }
+};
